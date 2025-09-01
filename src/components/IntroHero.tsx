@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Activity, ShieldCheck, Brain, Timer, User, Building2, Briefcase, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { ArrowRight, Activity, ShieldCheck, Brain, Timer, User, Building2, Briefcase, CheckCircle2, AlertCircle, Loader2, AlignCenter } from "lucide-react";
 import { ComponentType, useState, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -105,23 +105,38 @@ const IntroHero = ({ onStart }: IntroHeroProps) => {
       : `${fieldBase}`;
 
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative overflow-hidden min-h-screen sm:min-h-[600px] md:min-h-[700px]">
       {/* Background composto: foto colaboradores + overlay */}
       <div aria-hidden="true" className="absolute inset-0">
+        {/* Imagem para mobile */}
         <img
-          src="/colaboradores-belz.png"
+          src="/quiz-background-4.png"
           alt=""
-          className="w-full h-full object-cover object-center brightness-100 contrast-105"
+          className="w-full h-full object-cover object-center brightness-100 contrast-105 sm:hidden"
           loading="eager"
           decoding="async"
         />
-        {/* Overlay único mais leve para legibilidade do texto */}
-        <div className="absolute inset-0 bg-gradient-to-b from-corporate-blue-dark/75 via-corporate-blue/70 to-corporate-blue-light/80" />
-        {/* Radial highlights sutis */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_35%,hsl(var(--accent)/0.30),transparent_60%),radial-gradient(circle_at_75%_70%,hsl(var(--primary)/0.28),transparent_62%)] mix-blend-screen opacity-70" />
+        {/* Imagem para desktop/tablet */}
+        <img
+          src="/quiz-background.png"
+          alt=""
+          className="w-full h-full object-cover object-center brightness-100 contrast-105 hidden sm:block"
+          loading="eager"
+          decoding="async"
+        />
+        
+        {/* Overlay para Mobile */}
+        <div className="absolute inset-0 bg-gradient-to-b from-corporate-blue-dark/85 via-corporate-blue/75 to-corporate-blue-light/90 sm:hidden" />
+        {/* Radial highlights para Mobile */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,hsl(var(--accent)/0.25),transparent_55%),radial-gradient(circle_at_70%_60%,hsl(var(--primary)/0.25),transparent_60%)] mix-blend-screen opacity-60 sm:hidden" />
+        
+        {/* Overlay para Desktop */}
+        <div className="absolute inset-0 bg-gradient-to-b from-corporate-blue-dark/15 via-corporate-blue/35 to-corporate-blue-light/60 hidden sm:block" />
+        {/* Radial highlights para Desktop */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_35%,hsl(var(--accent)/0.30),transparent_60%),radial-gradient(circle_at_75%_70%,hsl(var(--primary)/0.28),transparent_62%)] mix-blend-screen opacity-70 hidden sm:block" />
       </div>
 
-      <div className="relative container mx-auto px-5 pt-16 pb-20 md:pt-20 md:pb-28 flex flex-col items-center text-center text-white max-w-4xl">
+      <div className="relative container mx-auto px-5 py-16 sm:pt-16 sm:pb-20 md:pt-20 md:pb-28 flex flex-col items-center text-center text-white max-w-4xl min-h-screen sm:min-h-[600px] md:min-h-[700px] justify-center">
         <img
           src="/Conecta-Saude.png"
           alt="Belz Conecta Saúde"
@@ -140,7 +155,7 @@ const IntroHero = ({ onStart }: IntroHeroProps) => {
         </p>
 
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-            <Feature icon={Activity} title="Postura" desc="Altura, apoio e alinhamento" />
+            <Feature icon={AlignCenter} title="Postura" desc="Altura, apoio e alinhamento" />
             <Feature icon={Brain} title="Consciência" desc="Hábitos e atenção diária" />
             <Feature icon={Timer} title="Pausas" desc="Intervalos e microdescansos" />
             <Feature icon={ShieldCheck} title="Prevenção" desc="Redução de riscos" />

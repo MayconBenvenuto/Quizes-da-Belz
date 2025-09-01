@@ -65,7 +65,7 @@ const Layout = ({ children, hideHeader = false }: LayoutProps) => {
 
       {/* Footer */}
       <footer className="mt-auto bg-corporate-blue-dark text-white/70 py-6 text-center text-xs sm:text-sm">
-        <div className="container mx-auto px-4 sm:px-6 flex flex-col gap-2 sm:flex-row items-center justify-between">
+        <div className="container mx-auto px-4 sm:px-6 flex flex-col items-center justify-center">
           <p>© 2025 Belz Conecta Saúde - Quiz de Ergonomia</p>
         </div>
       </footer>
