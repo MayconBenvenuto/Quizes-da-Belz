@@ -166,7 +166,7 @@ const Admin = () => {
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Dica: admin123
+                    Dica: não é admin123
                   </p>
                 </div>
                 

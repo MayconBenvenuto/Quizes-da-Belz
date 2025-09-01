@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Activity, ShieldCheck, Brain, Timer, User, Building2, Briefcase, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
-import { ComponentType, useState } from "react";
+import { ComponentType, useState, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,19 +41,61 @@ const IntroHero = ({ onStart }: IntroHeroProps) => {
     }
   };
 
-  const handleChange = (field: keyof typeof formData) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFirstNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (touched[field]) {
-      setErrors(prev => ({ ...prev, [field]: value.trim() ? undefined : prev[field] || "Obrigatório" }));
+    setFormData(prev => ({ ...prev, firstName: value }));
+    if (touched.firstName) {
+      setErrors(prev => ({ ...prev, firstName: value.trim() ? undefined : "Obrigatório" }));
     }
-  };
+  }, [touched.firstName]);
 
-  const handleBlur = (field: keyof typeof formData) => () => {
-    setTouched(prev => ({ ...prev, [field]: true }));
-    if (!formData[field].trim()) setErrors(prev => ({ ...prev, [field]: prev[field] || "Obrigatório" }));
-    else setErrors(prev => ({ ...prev, [field]: undefined }));
-  };
+  const handleLastNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData(prev => ({ ...prev, lastName: value }));
+    if (touched.lastName) {
+      setErrors(prev => ({ ...prev, lastName: value.trim() ? undefined : "Obrigatório" }));
+    }
+  }, [touched.lastName]);
+
+  const handleSectorChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData(prev => ({ ...prev, sector: value }));
+    if (touched.sector) {
+      setErrors(prev => ({ ...prev, sector: value.trim() ? undefined : "Obrigatório" }));
+    }
+  }, [touched.sector]);
+
+  const handleRoleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData(prev => ({ ...prev, role: value }));
+    if (touched.role) {
+      setErrors(prev => ({ ...prev, role: value.trim() ? undefined : "Obrigatório" }));
+    }
+  }, [touched.role]);
+
+  const handleFirstNameBlur = useCallback(() => {
+    setTouched(prev => ({ ...prev, firstName: true }));
+    if (!formData.firstName.trim()) setErrors(prev => ({ ...prev, firstName: "Obrigatório" }));
+    else setErrors(prev => ({ ...prev, firstName: undefined }));
+  }, [formData.firstName]);
+
+  const handleLastNameBlur = useCallback(() => {
+    setTouched(prev => ({ ...prev, lastName: true }));
+    if (!formData.lastName.trim()) setErrors(prev => ({ ...prev, lastName: "Obrigatório" }));
+    else setErrors(prev => ({ ...prev, lastName: undefined }));
+  }, [formData.lastName]);
+
+  const handleSectorBlur = useCallback(() => {
+    setTouched(prev => ({ ...prev, sector: true }));
+    if (!formData.sector.trim()) setErrors(prev => ({ ...prev, sector: "Obrigatório" }));
+    else setErrors(prev => ({ ...prev, sector: undefined }));
+  }, [formData.sector]);
+
+  const handleRoleBlur = useCallback(() => {
+    setTouched(prev => ({ ...prev, role: true }));
+    if (!formData.role.trim()) setErrors(prev => ({ ...prev, role: "Obrigatório" }));
+    else setErrors(prev => ({ ...prev, role: undefined }));
+  }, [formData.role]);
 
   const fieldBase = "pl-9 pr-3 h-11 text-sm";
   const fieldState = (f: keyof typeof formData) => errors[f]
@@ -62,34 +104,6 @@ const IntroHero = ({ onStart }: IntroHeroProps) => {
       ? `${fieldBase} border-emerald-500 focus-visible:ring-emerald-500/30`
       : `${fieldBase}`;
 
-  function FieldCompact({ id, label, placeholder, icon: Icon }: { id: keyof typeof formData; label: string; placeholder: string; icon: ComponentType<{ className?: string }> }) {
-    return (
-      <div className="space-y-2">
-        <Label htmlFor={id} className="text-xs font-medium text-white/70 uppercase tracking-wide">{label}</Label>
-        <div className="relative">
-          <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-corporate-blue/70" />
-          <Input
-            id={id}
-            value={formData[id]}
-            onChange={handleChange(id)}
-            onBlur={handleBlur(id)}
-            placeholder={placeholder}
-            disabled={submitting}
-            className={`${fieldState(id)} bg-white/90 backdrop-blur border rounded-lg focus-visible:ring-2 transition pr-9 disabled:opacity-60 disabled:cursor-not-allowed`}
-          />
-          {touched[id] && errors[id] && (
-            <AlertCircle className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-destructive" />
-          )}
-          {touched[id] && !errors[id] && formData[id].trim() && (
-            <CheckCircle2 className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-emerald-500" />
-          )}
-        </div>
-        {touched[id] && errors[id] && (
-          <p className="text-xs text-destructive font-medium">{errors[id]}</p>
-        )}
-      </div>
-    );
-  }
   return (
     <section className="relative overflow-hidden">
       {/* Background composto: foto colaboradores + overlay */}
@@ -152,12 +166,104 @@ const IntroHero = ({ onStart }: IntroHeroProps) => {
               </DialogHeader>
               <form onSubmit={submit} className="space-y-6 mt-2" aria-live="polite">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <FieldCompact id="firstName" label="Nome" placeholder="Ex: Ana" icon={User} />
-                  <FieldCompact id="lastName" label="Sobrenome" placeholder="Ex: Silva" icon={User} />
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName" className="text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">Nome</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                      <Input
+                        id="firstName"
+                        value={formData.firstName}
+                        onChange={handleFirstNameChange}
+                        onBlur={handleFirstNameBlur}
+                        placeholder="Ex: Ana"
+                        disabled={submitting}
+                        className={`${fieldState('firstName')} bg-white border rounded-lg focus-visible:ring-2 transition pr-9 disabled:opacity-60 disabled:cursor-not-allowed`}
+                      />
+                      {touched.firstName && errors.firstName && (
+                        <AlertCircle className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-destructive" />
+                      )}
+                      {touched.firstName && !errors.firstName && formData.firstName.trim() && (
+                        <CheckCircle2 className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-emerald-500" />
+                      )}
+                    </div>
+                    {touched.firstName && errors.firstName && (
+                      <p className="text-xs text-destructive font-medium">{errors.firstName}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName" className="text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">Sobrenome</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                      <Input
+                        id="lastName"
+                        value={formData.lastName}
+                        onChange={handleLastNameChange}
+                        onBlur={handleLastNameBlur}
+                        placeholder="Ex: Silva"
+                        disabled={submitting}
+                        className={`${fieldState('lastName')} bg-white border rounded-lg focus-visible:ring-2 transition pr-9 disabled:opacity-60 disabled:cursor-not-allowed`}
+                      />
+                      {touched.lastName && errors.lastName && (
+                        <AlertCircle className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-destructive" />
+                      )}
+                      {touched.lastName && !errors.lastName && formData.lastName.trim() && (
+                        <CheckCircle2 className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-emerald-500" />
+                      )}
+                    </div>
+                    {touched.lastName && errors.lastName && (
+                      <p className="text-xs text-destructive font-medium">{errors.lastName}</p>
+                    )}
+                  </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <FieldCompact id="sector" label="Setor" placeholder="Ex: Financeiro" icon={Building2} />
-                  <FieldCompact id="role" label="Cargo" placeholder="Ex: Analista" icon={Briefcase} />
+                  <div className="space-y-2">
+                    <Label htmlFor="sector" className="text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">Setor</Label>
+                    <div className="relative">
+                      <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                      <Input
+                        id="sector"
+                        value={formData.sector}
+                        onChange={handleSectorChange}
+                        onBlur={handleSectorBlur}
+                        placeholder="Ex: Financeiro"
+                        disabled={submitting}
+                        className={`${fieldState('sector')} bg-white border rounded-lg focus-visible:ring-2 transition pr-9 disabled:opacity-60 disabled:cursor-not-allowed`}
+                      />
+                      {touched.sector && errors.sector && (
+                        <AlertCircle className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-destructive" />
+                      )}
+                      {touched.sector && !errors.sector && formData.sector.trim() && (
+                        <CheckCircle2 className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-emerald-500" />
+                      )}
+                    </div>
+                    {touched.sector && errors.sector && (
+                      <p className="text-xs text-destructive font-medium">{errors.sector}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="role" className="text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">Cargo</Label>
+                    <div className="relative">
+                      <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                      <Input
+                        id="role"
+                        value={formData.role}
+                        onChange={handleRoleChange}
+                        onBlur={handleRoleBlur}
+                        placeholder="Ex: Analista"
+                        disabled={submitting}
+                        className={`${fieldState('role')} bg-white border rounded-lg focus-visible:ring-2 transition pr-9 disabled:opacity-60 disabled:cursor-not-allowed`}
+                      />
+                      {touched.role && errors.role && (
+                        <AlertCircle className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-destructive" />
+                      )}
+                      {touched.role && !errors.role && formData.role.trim() && (
+                        <CheckCircle2 className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-emerald-500" />
+                      )}
+                    </div>
+                    {touched.role && errors.role && (
+                      <p className="text-xs text-destructive font-medium">{errors.role}</p>
+                    )}
+                  </div>
                 </div>
                 <Button type="submit" disabled={submitting} className="w-full h-11 rounded-lg font-medium bg-corporate-blue hover:bg-corporate-blue-light transition disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                   {submitting && <Loader2 className="h-4 w-4 animate-spin" />} {submitting ? "Iniciando..." : "Iniciar"}
