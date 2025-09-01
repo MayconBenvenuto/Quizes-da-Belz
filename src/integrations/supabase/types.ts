@@ -14,7 +14,86 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      questions: {
+        Row: {
+          correct_option: number
+          created_at: string
+          id: number
+          options: Json
+          question: string
+        }
+        Insert: {
+          correct_option: number
+          created_at?: string
+          id?: number
+          options: Json
+          question: string
+        }
+        Update: {
+          correct_option?: number
+          created_at?: string
+          id?: number
+          options?: Json
+          question?: string
+        }
+        Relationships: []
+      }
+      results: {
+        Row: {
+          created_at: string
+          id: string
+          score: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          score: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          score?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "results_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string
+          first_name: string
+          id: string
+          last_name: string
+          role: string
+          sector: string
+        }
+        Insert: {
+          created_at?: string
+          first_name: string
+          id?: string
+          last_name: string
+          role: string
+          sector: string
+        }
+        Update: {
+          created_at?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          role?: string
+          sector?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
