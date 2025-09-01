@@ -1,8 +1,19 @@
+# Robots.txt para Quiz de Ergonomia - Belz Conecta Saúde
+# https://belzconectasaude.vercel.app/
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /*.json$
+
+# Permitir bots específicos
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Twitterbot
 Allow: /
@@ -10,5 +21,14 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
+User-agent: LinkedInBot
 Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+# Sitemap
+Sitemap: https://belzconectasaude.vercel.app/sitemap.xml
+
+# Cache directives
+Cache-control: public, max-age=86400

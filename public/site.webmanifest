@@ -1,0 +1,67 @@
+{
+  "name": "Quiz de Ergonomia - Belz Conecta Saúde",
+  "short_name": "Quiz Ergonomia",
+  "description": "Teste seus conhecimentos sobre ergonomia no trabalho. Avalie sua postura, ambiente de trabalho e práticas saudáveis com o Quiz da Belz Conecta Saúde.",
+  "categories": ["health", "education", "productivity"],
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/vetor_belz_conecta.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/vetor_belz_conecta.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/vetor_belz_conecta.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/vetor_belz_conecta.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/vetor_belz_conecta.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/vetor_belz_conecta.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#011147",
+  "background_color": "#ffffff",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Iniciar Quiz",
+      "short_name": "Quiz",
+      "description": "Começar o Quiz de Ergonomia",
+      "url": "/",
+      "icons": [
+        {
+          "src": "/vetor_belz_conecta.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

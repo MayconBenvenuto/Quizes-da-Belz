@@ -136,7 +136,7 @@ const IntroHero = ({ onStart }: IntroHeroProps) => {
           Teste seus conhecimentos e hábitos sobre postura, pausas e boas práticas ergonômicas. Descubra onde melhorar e avance rumo a um ambiente de trabalho mais saudável.
         </p>
         <p className="mt-3 text-[11px] uppercase tracking-[0.2em] font-medium text-white/60">
-          Belz Conecta Saúde
+          powered by Belz Conecta Saúde
         </p>
 
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
