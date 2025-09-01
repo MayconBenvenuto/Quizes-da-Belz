@@ -31,9 +31,9 @@ ALTER TABLE public.questions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.results ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for public access (since this is a public quiz)
-CREATE POLICY "Anyone can insert users" ON public.users FOR INSERT USING (true);
+CREATE POLICY "Anyone can insert users" ON public.users FOR INSERT WITH CHECK (true);
 CREATE POLICY "Anyone can read questions" ON public.questions FOR SELECT USING (true);
-CREATE POLICY "Anyone can insert results" ON public.results FOR INSERT USING (true);
+CREATE POLICY "Anyone can insert results" ON public.results FOR INSERT WITH CHECK (true);
 CREATE POLICY "Anyone can read results for admin" ON public.results FOR SELECT USING (true);
 CREATE POLICY "Anyone can read users for admin" ON public.users FOR SELECT USING (true);
 

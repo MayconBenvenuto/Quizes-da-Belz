@@ -30,6 +30,7 @@ const Quiz = ({ userId, userName, userDepartment, onQuizComplete }: QuizProps) =
   const [totalPoints, setTotalPoints] = useState(0); // Pontuação total considerando tempo
   const [timeLeft, setTimeLeft] = useState(30);
   const [questionStartTime, setQuestionStartTime] = useState(30); // Tempo inicial da pergunta
+  const [quizStartTime, setQuizStartTime] = useState<number>(Date.now()); // Tempo de início do quiz
   const [isCompleted, setIsCompleted] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -74,6 +75,9 @@ const Quiz = ({ userId, userName, userDepartment, onQuizComplete }: QuizProps) =
   const finishQuiz = useCallback(async (finalAnswers: string[]) => {
     setIsCompleted(true);
     
+    // Calcular tempo total de conclusão em segundos
+    const completionTime = Math.floor((Date.now() - quizStartTime) / 1000);
+    
     let finalScore = 0;
     questions.forEach((question, index) => {
       const correctAnswer = question.options[question.correct_option];
@@ -91,6 +95,8 @@ const Quiz = ({ userId, userName, userDepartment, onQuizComplete }: QuizProps) =
           {
             user_id: userId,
             score: finalScore,
+            total_points: totalPoints, // Salvar também a pontuação total
+            completion_time: completionTime, // Salvar tempo de conclusão
           }
         ]);
 
@@ -102,7 +108,7 @@ const Quiz = ({ userId, userName, userDepartment, onQuizComplete }: QuizProps) =
     } catch (error) {
       console.error('Erro ao salvar resultado:', error);
     }
-  }, [userId, questions, onQuizComplete]);
+  }, [userId, questions, onQuizComplete, totalPoints, quizStartTime]);
 
   const handleAnswer = useCallback((answer: string) => {
     setSelectedAnswer(answer);
@@ -138,6 +144,7 @@ const Quiz = ({ userId, userName, userDepartment, onQuizComplete }: QuizProps) =
 
   useEffect(() => {
     fetchQuestions();
+    setQuizStartTime(Date.now()); // Registrar o tempo de início quando as perguntas carregam
   }, []);
 
   useEffect(() => {

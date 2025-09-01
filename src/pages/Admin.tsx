@@ -16,6 +16,8 @@ interface UserResult {
   sector: string;
   role: string;
   score: number;
+  total_points?: number; // Opcional para dados antigos
+  completion_time?: number; // Tempo em segundos para completar o quiz
   created_at: string;
 }
 
@@ -60,7 +62,7 @@ const Admin = () => {
             role
           )
         `)
-        .order('score', { ascending: false });
+        .order('total_points', { ascending: false, nullsFirst: false }); // Ordenar por pontuação total, nulls no final
 
       if (error) throw error;
 
@@ -71,18 +73,20 @@ const Admin = () => {
         sector: result.users?.sector || '',
         role: result.users?.role || '',
         score: result.score,
+        total_points: result.total_points || 0, // Incluir pontuação total
+        completion_time: result.completion_time || 0, // Incluir tempo de conclusão
         created_at: result.created_at,
       })) || [];
 
       setResults(formattedResults);
 
-      // Calcular estatísticas
+      // Calcular estatísticas baseadas na pontuação total
       const totalUsers = formattedResults.length;
       const averageScore = totalUsers > 0 
-        ? Math.round(formattedResults.reduce((sum, r) => sum + r.score, 0) / totalUsers)
+        ? Math.round(formattedResults.reduce((sum, r) => sum + r.total_points, 0) / totalUsers)
         : 0;
       const topScore = totalUsers > 0 
-        ? Math.max(...formattedResults.map(r => r.score))
+        ? Math.max(...formattedResults.map(r => r.total_points))
         : 0;
 
       setStats({ totalUsers, averageScore, topScore });
@@ -109,9 +113,19 @@ const Admin = () => {
     });
   };
 
-  const getScoreColor = (score: number) => {
-    if (score >= 800) return "bg-success text-success-foreground";
-    if (score >= 600) return "bg-warning text-warning-foreground";
+  const formatTime = (seconds: number) => {
+    if (seconds === 0) return "N/A";
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    if (minutes > 0) {
+      return `${minutes}min ${remainingSeconds}s`;
+    }
+    return `${remainingSeconds}s`;
+  };
+
+  const getScoreColor = (totalPoints: number) => {
+    if (totalPoints >= 1200) return "bg-success text-success-foreground"; // 80%+ das respostas corretas com boa velocidade
+    if (totalPoints >= 900) return "bg-warning text-warning-foreground"; // 60%+ das respostas corretas
     return "bg-destructive text-destructive-foreground";
   };
 
@@ -228,6 +242,7 @@ const Admin = () => {
                 <div>
                   <p className="text-white/80 text-sm">Pontuação Média</p>
                   <p className="text-3xl font-bold">{stats.averageScore}</p>
+                  <p className="text-white/70 text-xs">pontos</p>
                 </div>
                 <BarChart3 className="w-10 h-10 text-white/80" />
               </div>
@@ -240,6 +255,7 @@ const Admin = () => {
                 <div>
                   <p className="text-white/80 text-sm">Maior Pontuação</p>
                   <p className="text-3xl font-bold">{stats.topScore}</p>
+                  <p className="text-white/70 text-xs">pontos</p>
                 </div>
                 <Trophy className="w-10 h-10 text-white/80" />
               </div>
@@ -289,7 +305,9 @@ const Admin = () => {
                       <TableHead>Nome</TableHead>
                       <TableHead>Setor</TableHead>
                       <TableHead>Cargo</TableHead>
+                      <TableHead className="text-center">Acertos</TableHead>
                       <TableHead className="text-center">Pontuação</TableHead>
+                      <TableHead className="text-center">Tempo</TableHead>
                       <TableHead className="text-center">Data</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -313,9 +331,19 @@ const Admin = () => {
                           {result.role}
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge className={getScoreColor(result.score)}>
-                            {result.score} pts
+                          <span className="text-sm font-medium">
+                            {result.score}/15
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge className={getScoreColor(result.total_points || 0)}>
+                            {result.total_points || 0} pts
                           </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <span className="text-sm text-muted-foreground">
+                            {formatTime(result.completion_time || 0)}
+                          </span>
                         </TableCell>
                         <TableCell className="text-center text-sm text-muted-foreground">
                           {formatDate(result.created_at)}
