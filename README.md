@@ -1,20 +1,24 @@
-# Welcome to your Lovable project
+# Quiz de Ergonomia – Belz Conecta Saúde
 
-## Project info
+Interface responsiva e acessível para avaliar conhecimentos em ergonomia. Construído com React + TypeScript + Vite + Tailwind + shadcn-ui e Supabase.
 
-**URL**: https://lovable.dev/projects/2f5f1806-e425-43e5-a443-facfb5d147d1
+Logo: `public/logo-conecta-saude.png`
+
+## Demo / Projeto
+
+[Projeto no Lovable](https://lovable.dev/projects/2f5f1806-e425-43e5-a443-facfb5d147d1)
 
 ## How can I edit this code?
 
 There are several ways of editing your application.
 
-**Use Lovable**
+### Use Lovable
 
 Simply visit the [Lovable Project](https://lovable.dev/projects/2f5f1806-e425-43e5-a443-facfb5d147d1) and start prompting.
 
 Changes made via Lovable will be committed automatically to this repo.
 
-**Use your preferred IDE**
+### Use seu IDE local
 
 If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
@@ -36,13 +40,13 @@ npm i
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Editar direto no GitHub
 
 - Navigate to the desired file(s).
 - Click the "Edit" button (pencil icon) at the top right of the file view.
 - Make your changes and commit the changes.
 
-**Use GitHub Codespaces**
+### GitHub Codespaces
 
 - Navigate to the main page of your repository.
 - Click on the "Code" button (green button) near the top right.
@@ -50,24 +54,72 @@ npm run dev
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## What technologies are used for this project?
+## Tecnologias
 
-This project is built with:
-
-- Vite
+- React 18 (SPA com React Router)
 - TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Vite
+- Tailwind CSS + design tokens customizados
+- shadcn-ui (subset mínimo de componentes: botão, card, dialog, toast, progresso, tabela, badge, input, label)
+- Supabase (Banco / API)
 
-## How can I deploy this project?
+## Responsividade & UI/UX
 
-Simply open [Lovable](https://lovable.dev/projects/2f5f1806-e425-43e5-a443-facfb5d147d1) and click on Share -> Publish.
+Princípios aplicados:
 
-## Can I connect a custom domain to my Lovable project?
+- Layout fluido mobile-first (breakpoints sm / md usados de modo progressivo)
+- Cabeçalho adaptativo (empilha no mobile, separa no desktop)
+- Botões grandes, área de toque ≥44px
+- Contraste de cores baseado em tokens HSL configurados em `index.css`
+- Gradientes leves e sombras suaves para profundidade sem poluição
+- Componente de progresso claro durante o quiz
+- Feedback imediato (cores + ícones) para respostas
+- Acessibilidade básica: link "Pular para o conteúdo", uso de `alt` em logo, hierarquia textual semântica
 
-Yes, you can!
+Próximas melhorias sugeridas (não implementadas ainda):
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- Aria roles para grupo de alternativas (`radiogroup`)
+- Anúncio de mudança de questão via `aria-live`
+- Modo alto contraste opcional
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Deploy
+
+1. Produção via Lovable: Project > Share > Publish.
+2. Deploy manual (exemplo Netlify / Vercel):
+	- `npm run build`
+	- Publicar pasta `dist/`.
+3. Variáveis de ambiente recomendadas (mover futuramente):
+	- `VITE_SUPABASE_URL`
+	- `VITE_SUPABASE_ANON_KEY`
+
+## Contribuição assistida (Copilot)
+
+Orientações para uso consistente do GitHub Copilot / agente:
+
+1. Sempre descrever claramente o objetivo (ex: "Adicionar ranking de usuários com top 10").
+2. Solicitar diffs atômicos (pequenos passos) para facilitar revisão.
+3. Após cada mudança, pedir: "rodar lint e build" para garantir integridade.
+4. Para novas funcionalidades:
+	- Definir contrato (inputs, outputs, estados de erro)
+	- Criar util/teste antes da implementação final quando possível
+5. Padrões de código:
+	- Imports absolutos usando alias `@/`
+	- Funções puras em `/src/lib` ou `/src/domain/<context>` (quando criado)
+	- Componentes UI sem lógica de negócio pesada
+6. Acessibilidade: sempre avaliar foco, leitura de tela e contraste.
+
+Prompt base recomendado:
+
+> Implementar [feature], criando [arquivos], adicionando testes para [casos], garantindo que lint e build passam. Descrever mudanças no README se necessário.
+
+## Próximos Passos Recomendados
+
+- (Opcional) Introduzir camada de cache para questões (React Query ou fetch simples com memo)
+- Extrair cálculo de pontuação para util + testes
+- Mover chaves Supabase para `.env`
+- Adicionar leaderboard / ranking
+- Testes e2e (Playwright)
+
+---
+
+Qualquer dúvida ou melhoria: abrir issue ou pedir ajuda ao agente.

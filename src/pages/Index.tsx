@@ -2,8 +2,8 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import Layout from "@/components/Layout";
-import UserForm from "@/components/UserForm";
 import Quiz from "@/components/Quiz";
+import IntroHero from "@/components/IntroHero";
 
 interface UserData {
   id: string;
@@ -13,13 +13,21 @@ interface UserData {
   role: string;
 }
 
+interface UserFormInput {
+  firstName: string;
+  lastName: string;
+  sector: string;
+  role: string;
+}
+
 const Index = () => {
   const [currentUser, setCurrentUser] = useState<UserData | null>(null);
+  const [showIntro, setShowIntro] = useState(true); // manter para controle de exibição do herói
   const [isQuizStarted, setIsQuizStarted] = useState(false);
   const [finalScore, setFinalScore] = useState<number | null>(null);
   const { toast } = useToast();
 
-  const handleUserSubmit = async (formData: any) => {
+  const handleUserSubmit = async (formData: UserFormInput) => {
     try {
       const { data, error } = await supabase
         .from('users')
@@ -96,11 +104,20 @@ const Index = () => {
     );
   }
 
-  return (
-    <Layout>
-      <UserForm onSubmit={handleUserSubmit} />
-    </Layout>
-  );
+  if (showIntro) {
+    return (
+      <Layout hideHeader>
+        <IntroHero onStart={async (data) => {
+          // Submete diretamente e inicia quiz
+          await handleUserSubmit(data);
+          setShowIntro(false);
+        }} />
+      </Layout>
+    );
+  }
+
+  // Caso raro: se sair do intro mas ainda sem quiz (fallback)
+  return <Layout><div className="container mx-auto px-6 py-12" /></Layout>;
 };
 
 export default Index;
