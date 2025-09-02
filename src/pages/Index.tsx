@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, SUPABASE_CONFIG_OK } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import Layout from "@/components/Layout";
 import Quiz from "@/components/Quiz";
@@ -63,6 +63,22 @@ const Index = () => {
       });
     }
   };
+
+  if (!SUPABASE_CONFIG_OK) {
+    return (
+      <Layout>
+        <div className="max-w-md mx-auto mt-16 p-6 bg-red-50 border border-red-200 rounded-lg text-red-700 space-y-3">
+          <h2 className="text-lg font-semibold">Configuração ausente</h2>
+          <p>As variáveis de ambiente do Supabase não estão configuradas no build.</p>
+          <ul className="list-disc list-inside text-sm space-y-1">
+            <li>Defina VITE_SUPABASE_URL</li>
+            <li>Defina VITE_SUPABASE_ANON_KEY</li>
+            <li>Republique a aplicação</li>
+          </ul>
+        </div>
+      </Layout>
+    );
+  }
 
   if (isQuizStarted && currentUser) {
     return (

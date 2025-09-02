@@ -7,8 +7,8 @@ import type { Database } from './types';
 const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').trim();
 const SUPABASE_PUBLISHABLE_KEY = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
 
-const missingEnv = !SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY;
-if (missingEnv) {
+export const SUPABASE_CONFIG_OK = Boolean(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY);
+if (!SUPABASE_CONFIG_OK) {
   console.error("[Supabase] Variáveis de ambiente ausentes. Defina VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.");
 }
 
@@ -17,14 +17,20 @@ if (missingEnv) {
 
 // Evita quebrar totalmente a aplicação em produção exibindo telas vazias; funções que chamarem
 // supabase com credenciais vazias irão falhar nas requisições, porém a UI ainda renderiza.
-export const supabase = !missingEnv
+export const supabase = SUPABASE_CONFIG_OK
   ? createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-      auth: {
-        storage: typeof window !== 'undefined' ? localStorage : undefined,
-        persistSession: true,
-        autoRefreshToken: true,
-      }
-    })
-  : createClient<Database>('https://example.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder', {
-      auth: { persistSession: false }
-    });
+    auth: {
+      storage: typeof window !== 'undefined' ? localStorage : undefined,
+      persistSession: true,
+      autoRefreshToken: true,
+    }
+  })
+  // Criamos um client "inócuo" que nunca faz chamadas reais, evitando erros de rede.
+  : {
+      from: () => ({
+        select: () => Promise.reject(new Error('Supabase não configurado')), 
+        insert: () => Promise.reject(new Error('Supabase não configurado')),
+        update: () => Promise.reject(new Error('Supabase não configurado')),
+        delete: () => Promise.reject(new Error('Supabase não configurado')),
+      })
+    } as unknown as ReturnType<typeof createClient<Database>>;
