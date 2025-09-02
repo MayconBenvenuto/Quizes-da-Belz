@@ -7,7 +7,8 @@ import type { Database } from './types';
 const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').trim();
 const SUPABASE_PUBLISHABLE_KEY = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
 
-if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+const missingEnv = !SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY;
+if (missingEnv) {
   console.error("[Supabase] Variáveis de ambiente ausentes. Defina VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.");
 }
 
@@ -16,14 +17,14 @@ if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
 
 // Evita quebrar totalmente a aplicação em produção exibindo telas vazias; funções que chamarem
 // supabase com credenciais vazias irão falhar nas requisições, porém a UI ainda renderiza.
-export const supabase = createClient<Database>(
-  SUPABASE_URL || 'https://placeholder.supabase.co',
-  SUPABASE_PUBLISHABLE_KEY || 'anon-placeholder-key',
-  {
-    auth: {
-      storage: typeof window !== 'undefined' ? localStorage : undefined,
-      persistSession: true,
-      autoRefreshToken: true,
-    }
-  }
-);
+export const supabase = !missingEnv
+  ? createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+      auth: {
+        storage: typeof window !== 'undefined' ? localStorage : undefined,
+        persistSession: true,
+        autoRefreshToken: true,
+      }
+    })
+  : createClient<Database>('https://example.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder', {
+      auth: { persistSession: false }
+    });
