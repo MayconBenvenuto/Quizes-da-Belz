@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { supabase, SUPABASE_CONFIG_OK } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import Layout from "@/components/Layout";
-import Quiz from "@/components/Quiz";
+// IntroHero faz parte da experiência inicial e pode ficar no bundle da rota
 import IntroHero from "@/components/IntroHero";
+// Quiz é pesado (animações, lógica e ícones) -> lazy load somente quando iniciar
+const Quiz = lazy(() => import("@/components/Quiz"));
 
 interface UserData {
   id: string;
@@ -83,17 +85,19 @@ const Index = () => {
   if (isQuizStarted && currentUser) {
     return (
       <Layout>
-        <Quiz 
-          userId={currentUser.id} 
-          userName={`${currentUser.firstName} ${currentUser.lastName}`}
-          userDepartment={currentUser.sector}
-          onQuizComplete={() => {
-            toast({
-              title: "Quiz Concluído!",
-              description: "Obrigado por participar do Quiz de Ergonomia!",
-            });
-          }} 
-        />
+        <Suspense fallback={<div className="py-24 text-center text-sm text-gray-500">Carregando quiz...</div>}>
+          <Quiz 
+            userId={currentUser.id} 
+            userName={`${currentUser.firstName} ${currentUser.lastName}`}
+            userDepartment={currentUser.sector}
+            onQuizComplete={() => {
+              toast({
+                title: "Quiz Concluído!",
+                description: "Obrigado por participar do Quiz de Ergonomia!",
+              });
+            }} 
+          />
+        </Suspense>
       </Layout>
     );
   }
