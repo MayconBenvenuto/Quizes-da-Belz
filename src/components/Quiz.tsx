@@ -133,11 +133,16 @@ const Quiz = ({ userId, userName, userDepartment, onQuizComplete }: QuizProps) =
       if (currentQuestionIndex === questions.length - 1) {
         finishQuiz(newAnswers);
       } else {
+        // Avançar para próxima pergunta garantindo limpeza de estado visual no mobile
+        // Limpa foco para evitar que estilização de :focus permaneça em botões reutilizados
+        if (typeof window !== 'undefined' && document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+        setSelectedAnswer(''); // Limpa seleção antes de mudar pergunta
+        setShowExplanation(false);
         setCurrentQuestionIndex(currentQuestionIndex + 1);
-        setSelectedAnswer('');
         setTimeLeft(30);
         setQuestionStartTime(30);
-        setShowExplanation(false);
       }
     }, 3000);
   }, [answers, currentQuestionIndex, questions, score, timeLeft, calculatePoints, finishQuiz]);
@@ -303,10 +308,10 @@ const Quiz = ({ userId, userName, userDepartment, onQuizComplete }: QuizProps) =
         <CardTitle className="text-xl">{currentQuestion?.question}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
+        <div key={currentQuestion?.id} className="space-y-3">
           {currentQuestion?.options.map((option, index) => (
             <Button
-              key={index}
+              key={`${currentQuestion.id}-${index}`}
               variant={
                 showExplanation
                   ? option === correctAnswer
