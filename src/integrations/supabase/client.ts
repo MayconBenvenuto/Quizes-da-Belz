@@ -4,21 +4,26 @@ import type { Database } from './types';
 
 // Prefer environment variables; fall back to empty string if not defined.
 // For Vite, variables must be prefixed with VITE_ to be exposed to the client.
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').trim();
+const SUPABASE_PUBLISHABLE_KEY = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
 
 if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-  // Soft warning in console to aid local dev without crashing build.
-  console.warn("Supabase env vars missing: VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY");
+  console.error("[Supabase] Variáveis de ambiente ausentes. Defina VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.");
 }
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: {
-    storage: localStorage,
-    persistSession: true,
-    autoRefreshToken: true,
+// Evita quebrar totalmente a aplicação em produção exibindo telas vazias; funções que chamarem
+// supabase com credenciais vazias irão falhar nas requisições, porém a UI ainda renderiza.
+export const supabase = createClient<Database>(
+  SUPABASE_URL || 'https://placeholder.supabase.co',
+  SUPABASE_PUBLISHABLE_KEY || 'anon-placeholder-key',
+  {
+    auth: {
+      storage: typeof window !== 'undefined' ? localStorage : undefined,
+      persistSession: true,
+      autoRefreshToken: true,
+    }
   }
-});
+);
