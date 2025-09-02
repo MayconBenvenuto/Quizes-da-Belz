@@ -318,11 +318,11 @@ const Quiz = ({ userId, userName, userDepartment, onQuizComplete }: QuizProps) =
                   ? "secondary"
                   : "outline"
               }
-              className="w-full justify-start h-auto p-4 text-left"
+              className="w-full justify-start h-auto p-4 text-left whitespace-normal"
               onClick={() => !showExplanation && handleAnswer(option)}
               disabled={showExplanation}
             >
-              <div className="flex items-center space-x-3">
+              <div className="flex items-start space-x-3 w-full flex-wrap">
                 {showExplanation && (
                   <>
                     {option === correctAnswer && (
@@ -333,7 +333,7 @@ const Quiz = ({ userId, userName, userDepartment, onQuizComplete }: QuizProps) =
                     )}
                   </>
                 )}
-                <span>{option}</span>
+                <span className="flex-1 text-sm sm:text-base leading-snug break-words whitespace-normal">{option}</span>
               </div>
             </Button>
           ))}
