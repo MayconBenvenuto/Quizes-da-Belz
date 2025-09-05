@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Trophy, Users, BarChart3, Eye, EyeOff } from "lucide-react";
+import { Shield, Trophy, Users, BarChart3, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import Layout from "@/components/Layout";
@@ -140,6 +140,15 @@ const Admin = () => {
     return (
       <Layout>
         <div className="container mx-auto px-6 py-12">
+          <div className="mb-6">
+            <a
+              href="/"
+              className="inline-flex items-center gap-2 text-sm text-corporate-blue hover:underline font-medium group"
+            >
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+              Voltar
+            </a>
+          </div>
           <div className="max-w-md mx-auto">
             <Card className="shadow-xl border-0 bg-white/95 backdrop-blur-sm">
               <CardHeader className="text-center space-y-2">
@@ -202,8 +211,16 @@ const Admin = () => {
     <Layout>
       <div className="container mx-auto px-6 py-8">
         <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-4">
+              <a
+                href="/"
+                className="inline-flex items-center gap-1 text-sm text-corporate-blue hover:underline font-medium group"
+                aria-label="Voltar para a Home"
+              >
+                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+                Voltar
+              </a>
               <h1 className="text-3xl font-bold text-corporate-blue flex items-center gap-2">
                 <BarChart3 className="w-8 h-8" />
                 Painel Administrativo

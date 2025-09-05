@@ -81,6 +81,8 @@ export type Database = {
           last_name: string
           role: string
           sector: string
+          password_hash?: string | null
+          email?: string | null
         }
         Insert: {
           created_at?: string
@@ -89,6 +91,8 @@ export type Database = {
           last_name: string
           role: string
           sector: string
+          password_hash?: string | null
+          email?: string | null
         }
         Update: {
           created_at?: string
@@ -97,6 +101,8 @@ export type Database = {
           last_name?: string
           role?: string
           sector?: string
+          password_hash?: string | null
+          email?: string | null
         }
         Relationships: []
       }

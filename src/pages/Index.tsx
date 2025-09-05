@@ -13,6 +13,7 @@ interface UserData {
   lastName: string;
   sector: string;
   role: string;
+  email?: string;
 }
 
 interface UserFormInput {
@@ -53,15 +54,15 @@ const Index = () => {
       setIsQuizStarted(true);
 
       toast({
-        title: "Sucesso!",
-        description: "Dados salvos. Iniciando o quiz...",
+        title: 'Sucesso!',
+        description: 'Dados salvos. Iniciando o quiz...',
       });
     } catch (error) {
       console.error('Erro ao salvar usuário:', error);
       toast({
-        title: "Erro",
-        description: "Não foi possível salvar seus dados. Tente novamente.",
-        variant: "destructive",
+        title: 'Erro',
+        description: 'Não foi possível salvar seus dados. Tente novamente.',
+        variant: 'destructive',
       });
     }
   };
