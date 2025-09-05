@@ -3,6 +3,14 @@
     {
       "source": "/(.*)",
       "destination": "/index.html"
+    },
+    {
+      "source": "/diagnostico",
+      "destination": "https://diagnostico-conecta.vercel.app"
+    },
+    {
+      "source": "/diagnostico/(.*)",
+      "destination": "https://diagnostico-conecta.vercel.app/$1"
     }
   ]
 }
