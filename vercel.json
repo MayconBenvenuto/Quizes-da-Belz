@@ -1,8 +1,20 @@
 {
+  "redirects": [
+    {
+      "source": "/diagnostico/admin",
+      "destination": "https://diagnostico-conecta.vercel.app/admin",
+      "permanent": false
+    },
+    {
+      "source": "/diagnostico/admin/(.*)",
+      "destination": "https://diagnostico-conecta.vercel.app/admin/$1",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",
-  "destination": "/"
+      "destination": "/"
     }
   ]
 }
