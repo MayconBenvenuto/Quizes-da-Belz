@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 // Página que incorpora o app externo mantendo a URL local com otimizações de percepção de performance
 const Diagnostico = () => {
@@ -6,18 +7,24 @@ const Diagnostico = () => {
   const [timeoutHit, setTimeoutHit] = useState(false);
   const [loadMs, setLoadMs] = useState<number | null>(null);
   const startRef = useRef<number>(performance.now());
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const location = useLocation();
+  // Subrota após /diagnostico, incluindo barras
+  const subPath = location.pathname.replace(/^\/diagnostico/, "") || "/";
+  const iframeUrl = `https://diagnostico-conecta.vercel.app${subPath}${location.search}${location.hash}`;
 
   useEffect(() => {
     // Timeout de fallback (12s) caso onLoad não dispare (bloqueio de X-Frame / CSP)
     const t = setTimeout(() => setTimeoutHit(true), 12000);
     // Pré-aquecer conexão adicionalmente (no-cors leve)
     try {
-      fetch("https://diagnostico-conecta.vercel.app", { mode: "no-cors", cache: "no-store" }).catch(() => {});
+      fetch(iframeUrl, { mode: "no-cors", cache: "no-store" }).catch(() => {});
     } catch {
       // ignore erros silenciosamente (no-cors fetch pode falhar sem impacto)
     }
     return () => clearTimeout(t);
-  }, []);
+  }, [iframeUrl]);
 
   const handleLoad = () => {
     setLoaded(true);
@@ -39,13 +46,14 @@ const Diagnostico = () => {
               setTimeoutHit(false);
               setLoaded(false);
               startRef.current = performance.now();
+              setReloadKey((k) => k + 1);
             }}
             className="px-4 py-2 rounded bg-corporate-blue text-white hover:bg-corporate-blue-light transition"
           >
             Tentar novamente
           </button>
           <a
-            href="https://diagnostico-conecta.vercel.app"
+            href={iframeUrl}
             target="_blank"
             rel="noreferrer"
             className="px-4 py-2 rounded border border-corporate-blue text-corporate-blue hover:bg-corporate-blue hover:text-white transition"
@@ -69,8 +77,9 @@ const Diagnostico = () => {
         </div>
       )}
       <iframe
+        key={reloadKey}
         title="Diagnóstico Conecta Saúde"
-        src="https://diagnostico-conecta.vercel.app"
+        src={iframeUrl}
         className="w-full h-full border-0 bg-white"
         allow="clipboard-read; clipboard-write; fullscreen"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"
