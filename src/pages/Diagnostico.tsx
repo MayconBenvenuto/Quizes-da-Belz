@@ -1,39 +1,86 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-// Página que incorpora o app externo mantendo a URL local
+// Página que incorpora o app externo mantendo a URL local com otimizações de percepção de performance
 const Diagnostico = () => {
-  const [allowed, setAllowed] = useState(true);
+  const [loaded, setLoaded] = useState(false);
+  const [timeoutHit, setTimeoutHit] = useState(false);
+  const [loadMs, setLoadMs] = useState<number | null>(null);
+  const startRef = useRef<number>(performance.now());
 
   useEffect(() => {
-    // Opcionalmente poderíamos fazer um HEAD request via fetch para detectar bloqueio de X-Frame-Options
-    // Mas navegadores bloqueiam de qualquer forma se houver frame-ancestors. Mantemos simples.
-    setAllowed(true);
+    // Timeout de fallback (12s) caso onLoad não dispare (bloqueio de X-Frame / CSP)
+    const t = setTimeout(() => setTimeoutHit(true), 12000);
+    // Pré-aquecer conexão adicionalmente (no-cors leve)
+    try {
+      fetch("https://diagnostico-conecta.vercel.app", { mode: "no-cors", cache: "no-store" }).catch(() => {});
+    } catch {
+      // ignore erros silenciosamente (no-cors fetch pode falhar sem impacto)
+    }
+    return () => clearTimeout(t);
   }, []);
 
-  if (!allowed) {
+  const handleLoad = () => {
+    setLoaded(true);
+    setLoadMs(Math.round(performance.now() - startRef.current));
+  };
+
+  if (timeoutHit && !loaded) {
     return (
-      <div className="w-full h-screen flex flex-col items-center justify-center gap-4 text-center px-6">
-        <h1 className="text-xl font-semibold text-corporate-blue">Diagnóstico</h1>
-        <p className="text-sm max-w-md text-gray-600">
-          Não foi possível carregar o diagnóstico incorporado. Abra diretamente em&nbsp;
-          <a href="https://diagnostico-conecta.vercel.app" className="text-corporate-blue underline" rel="noreferrer" target="_blank">diagnostico-conecta.vercel.app</a>.
-        </p>
+      <div className="w-full h-screen flex flex-col items-center justify-center gap-5 text-center px-6 bg-gradient-to-b from-corporate-blue/5 to-corporate-blue-light/10">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-lg font-semibold text-corporate-blue">Carregando diagnóstico...</h1>
+          <p className="text-sm text-gray-600 max-w-md mx-auto">
+            Está demorando mais que o esperado. Pode haver bloqueio de iframe ou conexão lenta.
+          </p>
+        </div>
+        <div className="flex gap-3 text-sm">
+          <button
+            onClick={() => {
+              setTimeoutHit(false);
+              setLoaded(false);
+              startRef.current = performance.now();
+            }}
+            className="px-4 py-2 rounded bg-corporate-blue text-white hover:bg-corporate-blue-light transition"
+          >
+            Tentar novamente
+          </button>
+          <a
+            href="https://diagnostico-conecta.vercel.app"
+            target="_blank"
+            rel="noreferrer"
+            className="px-4 py-2 rounded border border-corporate-blue text-corporate-blue hover:bg-corporate-blue hover:text-white transition"
+          >
+            Abrir em nova aba
+          </a>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-screen flex flex-col">
-      <div className="p-3 bg-gradient-to-r from-corporate-blue-dark/80 via-corporate-blue/70 to-corporate-blue-light/80 text-white text-sm font-medium shadow">
-        Diagnóstico Corporativo (incorporado)
-      </div>
+    <div className="w-full h-screen relative">
+      {!loaded && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-white/70 backdrop-blur-sm">
+          <div className="w-12 h-12 rounded-full border-4 border-corporate-blue/20 border-t-corporate-blue animate-spin" />
+          <div className="flex flex-col items-center gap-1">
+            <p className="text-sm font-medium text-corporate-blue">Carregando diagnóstico...</p>
+            <p className="text-[11px] text-gray-500 tracking-wide">Otimizando conexão segura</p>
+          </div>
+        </div>
+      )}
       <iframe
         title="Diagnóstico Conecta Saúde"
         src="https://diagnostico-conecta.vercel.app"
-        className="flex-1 w-full border-0 bg-white"
+        className="w-full h-full border-0 bg-white"
         allow="clipboard-read; clipboard-write; fullscreen"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"
+        onLoad={handleLoad}
       />
+      {loaded && loadMs !== null && (
+        <div className="pointer-events-none select-none absolute bottom-1 right-2 text-[10px] text-gray-400 font-mono">
+          {loadMs}ms
+        </div>
+      )}
     </div>
   );
 };

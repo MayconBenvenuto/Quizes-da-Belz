@@ -42,6 +42,10 @@
   <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="format-detection" content="telephone=no" />
+  <!-- Performance: antecipar conexões para app de diagnóstico -->
+  <link rel="dns-prefetch" href="//diagnostico-conecta.vercel.app" />
+  <link rel="preconnect" href="https://diagnostico-conecta.vercel.app" crossorigin />
+  <link rel="prefetch" href="https://diagnostico-conecta.vercel.app" as="document" />
     
   <!-- Preloads críticos (imagem hero mobile/desktop e logo) -->
   <link rel="preload" as="image" href="/quiz-background-4.png" media="(max-width: 639px)" />
