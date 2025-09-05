@@ -12,7 +12,12 @@ const Diagnostico = () => {
   const location = useLocation();
   // Subrota após /diagnostico, incluindo barras
   const subPath = location.pathname.replace(/^\/diagnostico/, "") || "/";
-  const iframeUrl = `https://diagnostico-conecta.vercel.app${subPath}${location.search}${location.hash}`;
+  const normalized = subPath.startsWith("/") ? subPath.slice(1) : subPath;
+  const isAdminSubroute = normalized.startsWith("admin");
+  // Se for admin, usar hash routing para evitar 404 no app remoto que pode não ter rewrites das subrotas
+  const iframeUrl = isAdminSubroute
+    ? `https://diagnostico-conecta.vercel.app/#/${normalized}${location.search}${location.hash}`
+    : `https://diagnostico-conecta.vercel.app${subPath}${location.search}${location.hash}`;
 
   useEffect(() => {
     // Timeout de fallback (12s) caso onLoad não dispare (bloqueio de X-Frame / CSP)
@@ -53,7 +58,7 @@ const Diagnostico = () => {
             Tentar novamente
           </button>
           <a
-            href={iframeUrl}
+            href={isAdminSubroute ? `https://diagnostico-conecta.vercel.app/#/${normalized}${location.search}${location.hash}` : iframeUrl}
             target="_blank"
             rel="noreferrer"
             className="px-4 py-2 rounded border border-corporate-blue text-corporate-blue hover:bg-corporate-blue hover:text-white transition"
