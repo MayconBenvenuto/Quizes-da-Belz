@@ -8,6 +8,7 @@ import { Suspense, lazy } from "react";
 const Index = lazy(() => import("./pages/Index"));
 const Admin = lazy(() => import("./pages/Admin"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Diagnostico = lazy(() => import("./pages/Diagnostico"));
 
 const App = () => (
   <TooltipProvider>
@@ -18,6 +19,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/diagnostico/*" element={<Diagnostico />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
