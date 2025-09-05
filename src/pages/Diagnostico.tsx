@@ -14,12 +14,15 @@ const Diagnostico = () => {
   const subPath = location.pathname.replace(/^\/diagnostico/, "") || "/";
   const normalized = subPath.startsWith("/") ? subPath.slice(1) : subPath;
   const isAdminSubroute = normalized.startsWith("admin");
-  // Se for admin, usar hash routing para evitar 404 no app remoto que pode não ter rewrites das subrotas
-  const iframeUrl = isAdminSubroute
-    ? `https://diagnostico-conecta.vercel.app/#/${normalized}${location.search}${location.hash}`
-    : `https://diagnostico-conecta.vercel.app${subPath}${location.search}${location.hash}`;
+  const iframeUrl = `https://diagnostico-conecta.vercel.app${subPath}${location.search}${location.hash}`;
 
   useEffect(() => {
+    // Para subrotas de admin, redireciona para o app externo (evita comportamento incorreto no iframe)
+    if (isAdminSubroute) {
+      const target = `https://diagnostico-conecta.vercel.app/admin${location.search}${location.hash}`;
+      window.location.replace(target);
+      return;
+    }
     // Timeout de fallback (12s) caso onLoad não dispare (bloqueio de X-Frame / CSP)
     const t = setTimeout(() => setTimeoutHit(true), 12000);
     // Pré-aquecer conexão adicionalmente (no-cors leve)
@@ -29,12 +32,21 @@ const Diagnostico = () => {
       // ignore erros silenciosamente (no-cors fetch pode falhar sem impacto)
     }
     return () => clearTimeout(t);
-  }, [iframeUrl]);
+  }, [iframeUrl, isAdminSubroute, location.search, location.hash]);
 
   const handleLoad = () => {
     setLoaded(true);
     setLoadMs(Math.round(performance.now() - startRef.current));
   };
+
+  if (isAdminSubroute) {
+    // Mensagem breve enquanto o navegador redireciona (não deve aparecer por muito tempo)
+    return (
+      <div className="w-full h-screen flex flex-col items-center justify-center gap-3 text-center px-6 bg-white">
+        <p className="text-sm text-corporate-blue">Redirecionando para o Administrador do Diagnóstico…</p>
+      </div>
+    );
+  }
 
   if (timeoutHit && !loaded) {
     return (
